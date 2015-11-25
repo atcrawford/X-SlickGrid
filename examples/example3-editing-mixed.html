@@ -167,7 +167,9 @@
 
   function queueAndExecuteCommand(item, column, editCommand) {
     commandQueue.push(editCommand);
-    editCommand.execute();
+	
+	console.log('Updating cell ' + editCommand.cell + ' on row ' + editCommand.row + ', changing value from ' + editCommand.prevSerializedValue + ' to ' + editCommand.serializedValue);
+    editCommand.execute();	
   }
 
   function undo() {
