@@ -38,6 +38,12 @@
     #contextMenu li:hover {
       background-color: white;
     }
+		
+    .slick-cell-checkboxsel {
+      background: #f0f0f0;
+      border-right-color: silver;
+      border-right-style: solid;
+    }
   </style>
 </head>
 <body>
@@ -62,9 +68,11 @@
 <script src="../lib/jquery.event.drag-2.2.js"></script>
 
 <script src="../slick.core.js"></script>
+<script src="../plugins/slick.checkboxselectcolumn.js"></script>
 <script src="../plugins/slick.cellrangedecorator.js"></script>
 <script src="../plugins/slick.cellrangeselector.js"></script>
 <script src="../plugins/slick.cellselectionmodel.js"></script>
+<script src="../plugins/slick.rowselectionmodel.js"></script>
 <script src="../slick.formatters.js"></script>
 <script src="../slick.editors.js"></script>
 <script src="../slick.grid.js"></script>
@@ -80,12 +88,15 @@
 
   var grid;
   var data = [];
-  var columns = [	
+  var checkboxSelector = new Slick.CheckboxSelectColumn({ cssClass: "slick-cell-checkboxsel" });
+  
+  var columns = [		
   {
     id: 'detail',
     name: 'Detail',
     headerCssClass: 'text-center',
     columns: [
+		checkboxSelector.getColumnDefinition(),	
 		{id: "Id", name: "Id", field: "Id", width: 20, cssClass: "cell-title", editor: Slick.Editors.Text, validator: requiredFieldValidator},
 		{id: "Stations", name: "Stations", field: "Stations", width: 75, editor: Slick.Editors.Text},
 		{id: "DP", name: "DP", field: "DP", width: 20, editor: Slick.Editors.Text},
@@ -140,7 +151,8 @@
 		{id: "Demo3-CPM", name: "CPM", field: "Demo3-CPM", width: 50, editor: Slick.Editors.Float},
     ]
   }];
-  
+    
+	
   var options = {
     editable: true,
     enableAddRow: false,
@@ -148,7 +160,7 @@
     asyncEditorLoading: false,
     autoEdit: true,		
     editCommandHandler: queueAndExecuteCommand,
-	frozenColumn: 9
+	frozenColumn: 10
   };
 
   var commandQueue = [];
@@ -1197,6 +1209,9 @@
       grid.updateRowCount();
       grid.render();
     });
+	
+    grid.setSelectionModel(new Slick.RowSelectionModel({selectActiveRow: false}));
+    grid.registerPlugin(checkboxSelector);
   })
   
   
