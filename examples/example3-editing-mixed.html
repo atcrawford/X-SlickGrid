@@ -18,6 +18,26 @@
 	.text-center {
 	  text-align: center;
 	}
+	
+    #contextMenu {
+      background: #e1efc7;
+      border: 1px solid gray;
+      padding: 2px;
+      display: inline-block;
+      min-width: 100px;
+      -moz-box-shadow: 2px 2px 2px silver;
+      -webkit-box-shadow: 2px 2px 2px silver;
+      z-index: 99999;
+    }
+    #contextMenu li {
+      padding: 4px 4px 4px 14px;
+      list-style: none;
+      cursor: pointer;
+      background: url("../images/arrow_right_peppermint.png") no-repeat center left;
+    }
+    #contextMenu li:hover {
+      background-color: white;
+    }
   </style>
 </head>
 <body>
@@ -28,6 +48,11 @@
 
 </div>
 
+<ul id="contextMenu" style="display:none;position:absolute">
+  <b>Context menu options:</b>
+  <li data="OptionValue">Select current row</li>
+</ul>
+<br />
 <button onclick="undo()"><img src="../images/arrow_undo.png" align="absmiddle"> Undo</button>
 
 <script src="../lib/firebugx.js"></script>
@@ -69,7 +94,7 @@
 		{id: "EndDate", name: "EndDate", field: "EndDate", minWidth: 60, editor: Slick.Editors.Date},
 		{id: "Time", name: "Time", field: "Time", width: 100, editor: Slick.Editors.Text},
 		{id: "Book", name: "Book", field: "Book", width: 100, editor: Slick.Editors.Text},
-		{id: "Rate", name: "Rate", field: "Rate", width: 50, editor: Slick.Editors.Integer},
+		{id: "Rate", name: "Rate", field: "Rate", width: 50, editor: Slick.Editors.Float},
 		{id: "Spotlength", name: "SL", field: "Spotlength", width: 40, editor: Slick.Editors.Text},
     ]
   },
@@ -121,8 +146,7 @@
     enableAddRow: false,
     enableCellNavigation: true,
     asyncEditorLoading: false,
-    autoEdit: true,	
-	
+    autoEdit: true,		
     editCommandHandler: queueAndExecuteCommand,
 	frozenColumn: 9
   };
@@ -142,9 +166,11 @@
     }
   }
   
+  var data = {};
+  
   $(function () {
 
-	var data = [
+	data = [
 				{ "Index": 1, "Id": 1, "Stations": "EDBG", "DP": "E", "ProgramName": "venenatis lacinia", "StartDate": "2014/05/24", "EndDate": "2014/02/26", "Time": "Su 5a-5:30a", "Book": "BLMAY/2014LP", "Rate": "164.44", "Spotlength": ":15", "Demo1-Rating": 1.7, "Demo1-000": 1.1, "Demo1-Share": 1.1, "Demo1-HUT": 29.7, "Demo1-HUT-000": 30.8, "Demo1-CPP": "136.51", "Demo1-CPM": "8.62", "Demo2-Rating": -0.5, "Demo2-000": 2.9, "Demo2-Share": 3.4, "Demo2-HUT": 29.6, "Demo2-HUT-000": 30.3, "Demo2-CPP": "196.99", "Demo2-CPM": "2.15", "Demo3-Rating": 0.2, "Demo3-000": 0.7, "Demo3-Share": 0.7, "Demo3-HUT": 29.1, "Demo3-HUT-000": 29.7, "Demo3-CPP": "134.95", "Demo3-CPM": "8.85", "Demo4-Rating": 1.9, "Demo4-000": 1.4, "Demo4-Share": 5, "Demo4-HUT": 31.4, "Demo4-HUT-000": 30.1, "Demo4-CPP": "171.24", "Demo4-CPM": "2.89", "Demo5-Rating": 0.6, "Demo5-000": -1.3, "Demo5-Share": 2.9, "Demo5-HUT": 32.2, "Demo5-HUT-000": 27.8, "Demo5-CPP": "172.52", "Demo5-CPM": "1.79" },
 				{ "Index": 2, "Id": 2, "Stations": "MY19", "DP": "B", "ProgramName": "et eros vestibulum", "StartDate": "2015/03/14", "EndDate": "2014/08/03", "Time": "Su 10:30a-11:30p", "Book": "BLMAY/2014LP", "Rate": "108.26", "Spotlength": ":45", "Demo1-Rating": 0.5, "Demo1-000": 2.5, "Demo1-Share": 3.1, "Demo1-HUT": 31.9, "Demo1-HUT-000": 29.7, "Demo1-CPP": "198.71", "Demo1-CPM": "4.15", "Demo2-Rating": 0.7, "Demo2-000": 2.9, "Demo2-Share": 2.3, "Demo2-HUT": 31.1, "Demo2-HUT-000": 29.5, "Demo2-CPP": "162.46", "Demo2-CPM": "8.55", "Demo3-Rating": 0.7, "Demo3-000": 0.8, "Demo3-Share": 1.6, "Demo3-HUT": 30.3, "Demo3-HUT-000": 29.8, "Demo3-CPP": "135.52", "Demo3-CPM": "1.33", "Demo4-Rating": 2.1, "Demo4-000": 0.3, "Demo4-Share": 1.9, "Demo4-HUT": 29.7, "Demo4-HUT-000": 28.3, "Demo4-CPP": "154.22", "Demo4-CPM": "5.03", "Demo5-Rating": 2.4, "Demo5-000": 2, "Demo5-Share": 6.5, "Demo5-HUT": 31.7, "Demo5-HUT-000": 30.6, "Demo5-CPP": "99.18", "Demo5-CPM": "9.51" },
 				{ "Index": 3, "Id": 3, "Stations": "VANC", "DP": "E", "ProgramName": "vitae consectetuer eget rutrum", "StartDate": "2015/08/27", "EndDate": "2014/06/16", "Time": "Su 5a-5:30a", "Book": "NOVES", "Rate": "197.74", "Spotlength": ":30", "Demo1-Rating": 2.2, "Demo1-000": 1.1, "Demo1-Share": 2.2, "Demo1-HUT": 30, "Demo1-HUT-000": 30.1, "Demo1-CPP": "181.78", "Demo1-CPM": "1.63", "Demo2-Rating": 1, "Demo2-000": 1.2, "Demo2-Share": 2.1, "Demo2-HUT": 28.7, "Demo2-HUT-000": 29.4, "Demo2-CPP": "192.33", "Demo2-CPM": "6.72", "Demo3-Rating": 1.7, "Demo3-000": 2.8, "Demo3-Share": 3.5, "Demo3-HUT": 29.7, "Demo3-HUT-000": 32.5, "Demo3-CPP": "77.22", "Demo3-CPM": "8.81", "Demo4-Rating": 0.8, "Demo4-000": 0.9, "Demo4-Share": 0.9, "Demo4-HUT": 30.5, "Demo4-HUT-000": 28.8, "Demo4-CPP": "134.03", "Demo4-CPM": "8.72", "Demo5-Rating": 2.3, "Demo5-000": 3.2, "Demo5-Share": 4.6, "Demo5-HUT": 30.2, "Demo5-HUT-000": 29.3, "Demo5-CPP": "162.82", "Demo5-CPM": "5.81" },
@@ -1149,6 +1175,19 @@
 
     grid = new Slick.Grid("#myGrid", data, columns, options);
 
+    grid.onContextMenu.subscribe(function (e) {
+      e.preventDefault();
+      var cell = grid.getCellFromEvent(e);	  
+      $("#contextMenu")
+        .data("row", cell.row)
+        .css("top", e.pageY)
+        .css("left", e.pageX)
+        .show();
+      $("body").one("click", function () {
+        $("#contextMenu").hide();
+      });
+    });
+	
     grid.setSelectionModel(new Slick.CellSelectionModel());
 
     grid.onAddNewRow.subscribe(function (e, args) {
@@ -1159,6 +1198,26 @@
       grid.render();
     });
   })
+  
+  
+  $("#contextMenu").click(function (e) {
+    if (!$(e.target).is("li")) {
+      return;
+    }
+    if (!grid.getEditorLock().commitCurrentEdit()) {
+      return;
+    }
+		
+    var row = $(this).data("row");
+	//   change the Stations value
+    // data[row].Stations = $(e.target).attr("data");
+    // grid.updateRow(row);
+	
+	//  select the row on which the right click occurred
+	var rowArray = [];
+	rowArray.push(row);
+	grid.setSelectedRows(rowArray);
+  });
 </script>
 </body>
 </html>
