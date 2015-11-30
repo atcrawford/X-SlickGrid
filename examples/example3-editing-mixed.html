@@ -201,9 +201,7 @@
 	}
 	
 	console.log('Updating cell ' + editCommand.cell + ' on row ' + editCommand.row + ', changing value from ' + editCommand.prevSerializedValue + ' to ' + editCommand.serializedValue);
-    editCommand.execute();	
-	
-	console.log(editCommand);
+    editCommand.execute();		
   }
   
   function findWithAttr(array, attr, value) {
@@ -217,16 +215,27 @@
   function UpdateCostFromCPPCPM(item, column, editCommand){
   	
 	var rateRowIndex = editCommand.row;
-	var rateCellIndex = findWithAttr(grid.getColumns(), 'field', 'Rate');
-	
+	var rateCellIndex = findWithAttr(grid.getColumns(), 'field', 'Rate');	
 	grid.flashCell(rateRowIndex, rateCellIndex);
 	
 	var prefix = column.field.split('-')[0]; 	
-	var newRate = (editCommand.serializedValue) * (item[prefix + '-Rating']);
 	
-	console.log(newRate);
-	
+	var newRate = (editCommand.serializedValue) * (item[prefix + '-Rating']);	
 	item.Rate = newRate;
+	
+	// recalculate the CPP columns for the row with the newly calculated Rate
+	for (var i = 0; i < 5; i++){
+		var demoPrefix = 'Demo' + i;
+		var demoRatingColumnName = demoPrefix + '-Rating';
+		var demoCppColumnName = demoPrefix + '-CPP';
+		
+		var newCPP = newRate * (item[demoRatingColumnName]);		
+		item[demoCppColumnName] = newCPP;
+		
+		var rateCellIndex = findWithAttr(grid.getColumns(), 'field', demoCppColumnName);
+		grid.flashCell(rateRowIndex, rateCellIndex);
+	}
+	
   };
 
 /*  
