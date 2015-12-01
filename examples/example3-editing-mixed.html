@@ -194,6 +194,11 @@
   var commandQueue = [];
 
   function queueAndExecuteCommand(item, column, editCommand) {
+	if (editCommand.prevSerializedValue === editCommand.serializedValue){
+	  // the cell's value didn't change, so just return
+	  return;
+	}
+  
     commandQueue.push(editCommand);
 	
 	if (column.name === 'CPM' || column.name === 'CPP'){		

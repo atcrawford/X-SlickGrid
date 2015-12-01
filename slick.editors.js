@@ -185,8 +185,11 @@
       $input.select();
     };
 
-    this.serializeValue = function () {
-      return parseFloat($input.val(), 10) || 0;
+    this.serializeValue = function () {				
+		if ($input.val() === '')
+		  return '';
+		else
+		  return parseFloat($input.val(), 10) || 0;
     };
 
     this.applyValue = function (item, state) {
